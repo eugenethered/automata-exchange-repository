@@ -1,2 +1,4 @@
-# automata-exchange-rate-repository
-Automata Exchange Rate Repository
+# Automata Exchange Rate Repository
+
+## Packaging
+`python3 -m build`
