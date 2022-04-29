@@ -22,6 +22,7 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.cache.delete_timeseries('test-time-series:exchange-rate:BTC/USDT', double_precision=True)
+        self.cache.delete_timeseries('test-time-series:exchange-rate:ETH/USDT', double_precision=True)
 
     def test_should_store_exchange_rates_via_repo(self):
         self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)
@@ -36,6 +37,25 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, 3)
         rates = exchange_rates.get()
         self.assertEqual(rates, {})
+
+    def test_should_obtain_multiple_exchange_rates_via_repo(self):
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38719.72')), 2)
+        self.repository.store(ExchangeRate('ETH', 'USDT', BigFloat('2861.62')), 1)
+        self.repository.store(ExchangeRate('ETH', 'USDT', BigFloat('2870.19')), 2)
+        instrument_exchanges = [
+            InstrumentExchange('BTC', 'USDT'),
+            InstrumentExchange('ETH', 'USDT')
+        ]
+        exchange_rates = self.repository.retrieve_multiple(instrument_exchanges, 0, 3)
+        rates_1 = exchange_rates.get_rates('BTC', 'USDT')
+        self.assertEqual(len(rates_1), 2)
+        self.assertEqual(rates_1[0], InstantRate(1, BigFloat('38835.34')))
+        self.assertEqual(rates_1[1], InstantRate(2, BigFloat('38719.72')))
+        rates_2 = exchange_rates.get_rates('ETH', 'USDT')
+        self.assertEqual(len(rates_2), 2)
+        self.assertEqual(rates_2[0], InstantRate(1, BigFloat('2861.62')))
+        self.assertEqual(rates_2[1], InstantRate(2, BigFloat('2870.19')))
 
 
 if __name__ == '__main__':
