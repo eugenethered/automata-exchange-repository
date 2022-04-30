@@ -30,8 +30,8 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, 3)
         rates = exchange_rates.get_rates('BTC', 'USDT')
         self.assertEqual(len(rates), 2)
-        self.assertEqual(rates[0], InstantRate(1, BigFloat('38835.34')))
-        self.assertEqual(rates[1], InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(rates[0], InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(rates[1], InstantRate(1, BigFloat('38835.34')))
 
     def test_should_have_empty_exchange_rates_from_repo_when_instruments_not_available(self):
         exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, 3)
@@ -50,12 +50,12 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         exchange_rates = self.repository.retrieve_multiple(instrument_exchanges, 0, 3)
         rates_1 = exchange_rates.get_rates('BTC', 'USDT')
         self.assertEqual(len(rates_1), 2)
-        self.assertEqual(rates_1[0], InstantRate(1, BigFloat('38835.34')))
-        self.assertEqual(rates_1[1], InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(rates_1[0], InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(rates_1[1], InstantRate(1, BigFloat('38835.34')))
         rates_2 = exchange_rates.get_rates('ETH', 'USDT')
         self.assertEqual(len(rates_2), 2)
-        self.assertEqual(rates_2[0], InstantRate(1, BigFloat('2861.62')))
-        self.assertEqual(rates_2[1], InstantRate(2, BigFloat('2870.19')))
+        self.assertEqual(rates_2[0], InstantRate(2, BigFloat('2870.19')))
+        self.assertEqual(rates_2[1], InstantRate(1, BigFloat('2861.62')))
 
 
 if __name__ == '__main__':

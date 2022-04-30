@@ -35,7 +35,7 @@ class ExchangeRateRepository:
     def retrieve(self, instrument_exchange: InstrumentExchange, time_from, time_to, exchange_rate_holder: ExchangeRateHolder = ExchangeRateHolder()) -> ExchangeRateHolder:
         rate_timeseries_key = self.instrument_exchange_timeseries_key(instrument_exchange)
         if self.cache.does_timeseries_exist(rate_timeseries_key):
-            timeseries_data = self.cache.get_timeseries_data(rate_timeseries_key, time_from=time_from, time_to=time_to, double_precision=True)
+            timeseries_data = self.cache.get_timeseries_data(rate_timeseries_key, time_from=time_from, time_to=time_to, double_precision=True, reverse_direction=True)
             for rate, value in timeseries_data:
                 exchange_rate = ExchangeRate(instrument_exchange.instrument, instrument_exchange.to_instrument, value)
                 exchange_rate_holder.add(exchange_rate, rate)
