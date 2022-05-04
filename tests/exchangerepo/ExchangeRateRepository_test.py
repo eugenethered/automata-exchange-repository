@@ -6,7 +6,7 @@ from core.exchange.InstrumentExchange import InstrumentExchange
 from core.number.BigFloat import BigFloat
 from exchange.rate.InstantRate import InstantRate
 
-from exchangeraterepo.repository.ExchangeRateRepository import ExchangeRateRepository
+from exchangerepo.repository.ExchangeRateRepository import ExchangeRateRepository
 
 
 class ExchangeRateRepositoryTestCase(unittest.TestCase):
