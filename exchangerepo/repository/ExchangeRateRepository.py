@@ -6,7 +6,7 @@ from core.exchange.InstrumentExchange import InstrumentExchange
 from core.options.exception.MissingOptionError import MissingOptionError
 from exchange.rate.ExchangeRateHolder import ExchangeRateHolder
 
-TIMESERIES_KEY = 'TIMESERIES_KEY'
+EXCHANGE_RATE_TIMESERIES_KEY = 'EXCHANGE_RATE_TIMESERIES_KEY'
 
 
 class ExchangeRateRepository:
@@ -14,14 +14,14 @@ class ExchangeRateRepository:
     def __init__(self, options):
         self.options = options
         self.__check_options()
-        self.timeseries_key = options[TIMESERIES_KEY]
+        self.timeseries_key = options[EXCHANGE_RATE_TIMESERIES_KEY]
         self.cache = RedisCacheHolder()
 
     def __check_options(self):
         if self.options is None:
-            raise MissingOptionError(f'missing option please provide options {TIMESERIES_KEY}')
-        if TIMESERIES_KEY not in self.options:
-            raise MissingOptionError(f'missing option please provide option {TIMESERIES_KEY}')
+            raise MissingOptionError(f'missing option please provide options {EXCHANGE_RATE_TIMESERIES_KEY}')
+        if EXCHANGE_RATE_TIMESERIES_KEY not in self.options:
+            raise MissingOptionError(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_KEY}')
 
     def instrument_exchange_timeseries_key(self, instrument_exchange: InstrumentExchange):
         instruments_to_exchange = f'{instrument_exchange.instrument}/{instrument_exchange.to_instrument}'
