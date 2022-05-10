@@ -15,7 +15,8 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         options = {
             'REDIS_SERVER_ADDRESS': '192.168.1.90',
             'REDIS_SERVER_PORT': 6379,
-            'EXCHANGE_RATE_TIMESERIES_KEY': 'test:time-series:exchange-rate:{}'
+            'EXCHANGE_RATE_TIMESERIES_KEY': 'test:time-series:exchange-rate:{}',
+            'EXCHANGE_RATE_TIMESERIES_RETENTION': 3600000
         }
         self.cache = RedisCacheHolder(options)
         self.repository = ExchangeRateRepository(options)

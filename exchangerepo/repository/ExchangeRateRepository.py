@@ -7,6 +7,7 @@ from core.options.exception.MissingOptionError import MissingOptionError
 from exchange.rate.ExchangeRateHolder import ExchangeRateHolder
 
 EXCHANGE_RATE_TIMESERIES_KEY = 'EXCHANGE_RATE_TIMESERIES_KEY'
+EXCHANGE_RATE_TIMESERIES_RETENTION = 'EXCHANGE_RATE_TIMESERIES_RETENTION'
 
 
 class ExchangeRateRepository:
@@ -15,13 +16,16 @@ class ExchangeRateRepository:
         self.options = options
         self.__check_options()
         self.timeseries_key = options[EXCHANGE_RATE_TIMESERIES_KEY]
+        self.timeseries_retention_time = options[EXCHANGE_RATE_TIMESERIES_RETENTION]
         self.cache = RedisCacheHolder()
 
     def __check_options(self):
         if self.options is None:
-            raise MissingOptionError(f'missing option please provide options {EXCHANGE_RATE_TIMESERIES_KEY}')
+            raise MissingOptionError(f'missing option please provide options [{EXCHANGE_RATE_TIMESERIES_KEY}, {EXCHANGE_RATE_TIMESERIES_RETENTION}]')
         if EXCHANGE_RATE_TIMESERIES_KEY not in self.options:
             raise MissingOptionError(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_KEY}')
+        if EXCHANGE_RATE_TIMESERIES_RETENTION not in self.options:
+            raise MissingOptionError(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_RETENTION}')
 
     def instrument_exchange_timeseries_key(self, instrument_exchange: InstrumentExchange):
         instruments_to_exchange = f'{instrument_exchange.instrument}/{instrument_exchange.to_instrument}'
@@ -29,7 +33,7 @@ class ExchangeRateRepository:
 
     def store(self, exchange_rate: ExchangeRate, event_time):
         rate_timeseries_key = self.instrument_exchange_timeseries_key(exchange_rate)
-        self.cache.create_timeseries(rate_timeseries_key, 'rate')
+        self.cache.create_timeseries(rate_timeseries_key, 'rate', limit_retention=self.timeseries_retention_time)
         self.cache.add_to_timeseries(rate_timeseries_key, event_time, exchange_rate.rate)
 
     def retrieve(self, instrument_exchange: InstrumentExchange, time_from, time_to, exchange_rate_holder: ExchangeRateHolder = ExchangeRateHolder()) -> ExchangeRateHolder:
