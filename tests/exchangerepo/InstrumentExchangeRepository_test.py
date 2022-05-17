@@ -18,6 +18,9 @@ class InstrumentExchangeRepositoryTestCase(unittest.TestCase):
         self.cache = RedisCacheHolder(options)
         self.repository = InstrumentExchangeRepository(options)
 
+    def tearDown(self):
+        self.cache.delete_timeseries('test:instrument-exchanges')
+
     def test_should_store_instrument_exchanges_via_repo(self):
         instrument_exchanges = InstrumentExchangesHolder()
         instrument_exchanges.add(InstrumentExchange('OTC', 'GBP'))
