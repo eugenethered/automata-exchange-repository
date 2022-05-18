@@ -1,3 +1,5 @@
+import logging
+
 from cache.holder.RedisCacheHolder import RedisCacheHolder
 from core.exchange.InstrumentExchange import InstrumentExchange
 from core.options.exception.MissingOptionError import MissingOptionError
@@ -9,6 +11,7 @@ INSTRUMENT_EXCHANGES_KEY = 'INSTRUMENT_EXCHANGES_KEY'
 class InstrumentExchangeRepository:
 
     def __init__(self, options):
+        self.log = logging.getLogger('InstrumentExchangeRepository')
         self.options = options
         self.__check_options()
         self.instrument_exchanges_key = options[INSTRUMENT_EXCHANGES_KEY]
@@ -16,8 +19,10 @@ class InstrumentExchangeRepository:
 
     def __check_options(self):
         if self.options is None:
+            self.log.warning(f'Instrument Exchange Repository missing option please provide options {INSTRUMENT_EXCHANGES_KEY}')
             raise MissingOptionError(f'Instrument Exchange Repository missing option please provide options {INSTRUMENT_EXCHANGES_KEY}')
         if INSTRUMENT_EXCHANGES_KEY not in self.options:
+            self.log.warning(f'Instrument Exchange Repository missing option please provide option {INSTRUMENT_EXCHANGES_KEY}')
             raise MissingOptionError(f'Instrument Exchange Repository missing option please provide option {INSTRUMENT_EXCHANGES_KEY}')
 
     def store(self, instrument_exchanges: InstrumentExchangesHolder):

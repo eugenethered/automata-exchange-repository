@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from cache.holder.RedisCacheHolder import RedisCacheHolder
@@ -13,6 +14,7 @@ EXCHANGE_RATE_TIMESERIES_RETENTION = 'EXCHANGE_RATE_TIMESERIES_RETENTION'
 class ExchangeRateRepository:
 
     def __init__(self, options):
+        self.log = logging.getLogger('ExchangeRateRepository')
         self.options = options
         self.__check_options()
         self.timeseries_key = options[EXCHANGE_RATE_TIMESERIES_KEY]
@@ -21,10 +23,13 @@ class ExchangeRateRepository:
 
     def __check_options(self):
         if self.options is None:
+            self.log.warning(f'missing option please provide options [{EXCHANGE_RATE_TIMESERIES_KEY}, {EXCHANGE_RATE_TIMESERIES_RETENTION}]')
             raise MissingOptionError(f'missing option please provide options [{EXCHANGE_RATE_TIMESERIES_KEY}, {EXCHANGE_RATE_TIMESERIES_RETENTION}]')
         if EXCHANGE_RATE_TIMESERIES_KEY not in self.options:
+            self.log.warning(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_KEY}')
             raise MissingOptionError(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_KEY}')
         if EXCHANGE_RATE_TIMESERIES_RETENTION not in self.options:
+            self.log.warning(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_RETENTION}')
             raise MissingOptionError(f'missing option please provide option {EXCHANGE_RATE_TIMESERIES_RETENTION}')
 
     def instrument_exchange_timeseries_key(self, instrument_exchange: InstrumentExchange):
