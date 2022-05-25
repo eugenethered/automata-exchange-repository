@@ -38,7 +38,7 @@ class ExchangeRateRepository:
 
     def store(self, exchange_rate: ExchangeRate, event_time):
         rate_timeseries_key = self.instrument_exchange_timeseries_key(exchange_rate)
-        self.cache.create_timeseries(rate_timeseries_key, 'rate', limit_retention=self.timeseries_retention_time)
+        self.cache.create_timeseries(rate_timeseries_key, 'rate', double_precision=True, limit_retention=self.timeseries_retention_time)
         self.cache.add_to_timeseries(rate_timeseries_key, event_time, exchange_rate.rate)
 
     def retrieve(self, instrument_exchange: InstrumentExchange, time_from, time_to, exchange_rate_holder: ExchangeRateHolder = ExchangeRateHolder()) -> ExchangeRateHolder:
