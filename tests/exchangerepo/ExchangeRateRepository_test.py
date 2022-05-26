@@ -34,10 +34,10 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         self.assertEqual(rates[0], InstantRate(2, BigFloat('38719.72')))
         self.assertEqual(rates[1], InstantRate(1, BigFloat('38835.34')))
 
-    def test_should_obtain_exchange_rates_using_wild_card_range(self):
+    def test_should_obtain_exchange_rates_using_latest_available_range_end_interval(self):
         self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)
         self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38719.72')), 2)
-        exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, '+')
+        exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0)
         rates = exchange_rates.get_rates('BTC', 'USDT')
         self.assertEqual(len(rates), 2)
         self.assertEqual(rates[0], InstantRate(2, BigFloat('38719.72')))
@@ -58,6 +58,25 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
             InstrumentExchange('ETH', 'USDT')
         ]
         exchange_rates = self.repository.retrieve_multiple(instrument_exchanges, 0, 3)
+        rates_1 = exchange_rates.get_rates('BTC', 'USDT')
+        self.assertEqual(len(rates_1), 2)
+        self.assertEqual(rates_1[0], InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(rates_1[1], InstantRate(1, BigFloat('38835.34')))
+        rates_2 = exchange_rates.get_rates('ETH', 'USDT')
+        self.assertEqual(len(rates_2), 2)
+        self.assertEqual(rates_2[0], InstantRate(2, BigFloat('2870.19')))
+        self.assertEqual(rates_2[1], InstantRate(1, BigFloat('2861.62')))
+
+    def test_should_obtain_multiple_exchange_rates_using_latest_available_range_end_interval(self):
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38719.72')), 2)
+        self.repository.store(ExchangeRate('ETH', 'USDT', BigFloat('2861.62')), 1)
+        self.repository.store(ExchangeRate('ETH', 'USDT', BigFloat('2870.19')), 2)
+        instrument_exchanges = [
+            InstrumentExchange('BTC', 'USDT'),
+            InstrumentExchange('ETH', 'USDT')
+        ]
+        exchange_rates = self.repository.retrieve_multiple(instrument_exchanges, 0)
         rates_1 = exchange_rates.get_rates('BTC', 'USDT')
         self.assertEqual(len(rates_1), 2)
         self.assertEqual(rates_1[0], InstantRate(2, BigFloat('38719.72')))
