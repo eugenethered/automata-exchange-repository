@@ -34,6 +34,15 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         self.assertEqual(rates[0], InstantRate(2, BigFloat('38719.72')))
         self.assertEqual(rates[1], InstantRate(1, BigFloat('38835.34')))
 
+    def test_should_obtain_exchange_rates_using_wild_card_range(self):
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38719.72')), 2)
+        exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, '+')
+        rates = exchange_rates.get_rates('BTC', 'USDT')
+        self.assertEqual(len(rates), 2)
+        self.assertEqual(rates[0], InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(rates[1], InstantRate(1, BigFloat('38835.34')))
+
     def test_should_have_empty_exchange_rates_from_repo_when_instruments_not_available(self):
         exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, 3)
         rates = exchange_rates.get()
