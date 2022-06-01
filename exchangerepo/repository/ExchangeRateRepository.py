@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 from cache.holder.RedisCacheHolder import RedisCacheHolder
 from core.exchange.ExchangeRate import ExchangeRate
@@ -55,3 +55,9 @@ class ExchangeRateRepository:
         for instrument_exchange in instrument_exchanges:
             self.retrieve(instrument_exchange, time_from, time_to, exchange_rate_holder)
         return exchange_rate_holder
+
+    def retrieve_latest(self, instrument_exchange: InstrumentExchange) -> Optional[ExchangeRate]:
+        exchange_rate_holder = self.retrieve(instrument_exchange, 0, exchange_rate_holder=ExchangeRateHolder())
+        (instrument, instrument_to) = instrument_exchange
+        exchange_rates = exchange_rate_holder.get_rates(instrument, instrument_to)
+        return exchange_rates[0] if len(exchange_rates) > 0 else None

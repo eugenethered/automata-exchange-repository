@@ -43,6 +43,16 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         self.assertEqual(rates[0], InstantRate(2, BigFloat('38719.72')))
         self.assertEqual(rates[1], InstantRate(1, BigFloat('38835.34')))
 
+    def test_should_obtain_latest_exchange_rate(self):
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)
+        self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38719.72')), 2)
+        latest_exchange_rate = self.repository.retrieve_latest(InstrumentExchange('BTC', 'USDT'))
+        self.assertEqual(latest_exchange_rate, InstantRate(2, BigFloat('38719.72')))
+
+    def test_should_not_obtain_latest_exchange_rate_when_there_are_none(self):
+        latest_exchange_rate = self.repository.retrieve_latest(InstrumentExchange('BTC', 'USDT'))
+        self.assertEqual(latest_exchange_rate, None)
+
     def test_should_have_empty_exchange_rates_from_repo_when_instruments_not_available(self):
         exchange_rates = self.repository.retrieve(InstrumentExchange('BTC', 'USDT'), 0, 3)
         rates = exchange_rates.get()
