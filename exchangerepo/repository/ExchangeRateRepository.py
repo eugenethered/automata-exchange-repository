@@ -6,6 +6,7 @@ from core.exchange.ExchangeRate import ExchangeRate
 from core.exchange.InstrumentExchange import InstrumentExchange
 from core.options.exception.MissingOptionError import MissingOptionError
 from exchange.rate.ExchangeRateHolder import ExchangeRateHolder
+from exchange.rate.InstantRate import InstantRate
 
 EXCHANGE_RATE_TIMESERIES_KEY = 'EXCHANGE_RATE_TIMESERIES_KEY'
 EXCHANGE_RATE_TIMESERIES_RETENTION = 'EXCHANGE_RATE_TIMESERIES_RETENTION'
@@ -56,7 +57,7 @@ class ExchangeRateRepository:
             self.retrieve(instrument_exchange, time_from, time_to, exchange_rate_holder)
         return exchange_rate_holder
 
-    def retrieve_latest(self, instrument_exchange: InstrumentExchange) -> Optional[ExchangeRate]:
+    def retrieve_latest(self, instrument_exchange: InstrumentExchange) -> Optional[InstantRate]:
         exchange_rate_holder = self.retrieve(instrument_exchange, 0, exchange_rate_holder=ExchangeRateHolder())
         (instrument, instrument_to) = instrument_exchange
         exchange_rates = exchange_rate_holder.get_rates(instrument, instrument_to)
