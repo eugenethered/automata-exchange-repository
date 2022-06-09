@@ -11,7 +11,7 @@ INSTRUMENT_EXCHANGES_KEY = 'INSTRUMENT_EXCHANGES_KEY'
 class InstrumentExchangeRepository:
 
     def __init__(self, options):
-        self.log = logging.getLogger('InstrumentExchangeRepository')
+        self.log = logging.getLogger(__name__)
         self.options = options
         self.__check_options()
         self.instrument_exchanges_key = options[INSTRUMENT_EXCHANGES_KEY]
@@ -30,6 +30,11 @@ class InstrumentExchangeRepository:
         all_exchanges = instrument_exchanges.get_all()
         serialized = list([[ie.instrument, ie.to_instrument] for ie in all_exchanges])
         self.cache.store(key, serialized)
+
+    def append_store(self, instrument_exchange: InstrumentExchange):
+        key = self.options[INSTRUMENT_EXCHANGES_KEY]
+        serialized = [instrument_exchange.instrument, instrument_exchange.to_instrument]
+        self.cache.append_store(key, serialized)
 
     def retrieve(self) -> InstrumentExchangesHolder:
         key = self.options[INSTRUMENT_EXCHANGES_KEY]
