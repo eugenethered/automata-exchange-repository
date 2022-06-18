@@ -11,7 +11,7 @@ INSTRUMENT_EXCHANGES_KEY = 'INSTRUMENT_EXCHANGES_KEY'
 class InstrumentExchangeRepository:
 
     def __init__(self, options):
-        self.log = logging.getLogger(__name__)
+        self.log = logging.getLogger('InstrumentExchangeRepository')
         self.options = options
         self.__check_options()
         self.instrument_exchanges_key = options[INSTRUMENT_EXCHANGES_KEY]
