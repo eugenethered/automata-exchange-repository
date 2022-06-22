@@ -1,6 +1,7 @@
 import unittest
 
 from cache.holder.RedisCacheHolder import RedisCacheHolder
+from cache.provider.RedisCacheProviderWithTimeSeries import RedisCacheProviderWithTimeSeries
 from core.exchange.ExchangeRate import ExchangeRate
 from core.exchange.InstrumentExchange import InstrumentExchange
 from core.number.BigFloat import BigFloat
@@ -15,15 +16,15 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         options = {
             'REDIS_SERVER_ADDRESS': '192.168.1.90',
             'REDIS_SERVER_PORT': 6379,
-            'EXCHANGE_RATE_TIMESERIES_KEY': 'test:time-series:exchange-rate:{}',
+            'EXCHANGE_RATE_TIMESERIES_KEY': 'test:ts:exchange-rate:{}',
             'EXCHANGE_RATE_TIMESERIES_RETENTION': 3600000
         }
-        self.cache = RedisCacheHolder(options)
+        self.cache = RedisCacheHolder(options, held_type=RedisCacheProviderWithTimeSeries)
         self.repository = ExchangeRateRepository(options)
 
     def tearDown(self):
-        self.cache.delete_timeseries('test:time-series:exchange-rate:BTC/USDT', double_precision=True)
-        self.cache.delete_timeseries('test:time-series:exchange-rate:ETH/USDT', double_precision=True)
+        self.cache.delete_timeseries('test:ts:exchange-rate:BTC/USDT', double_precision=True)
+        self.cache.delete_timeseries('test:ts:exchange-rate:ETH/USDT', double_precision=True)
 
     def test_should_store_exchange_rates_via_repo(self):
         self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38835.34')), 1)

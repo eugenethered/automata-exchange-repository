@@ -1,6 +1,7 @@
 import logging
 
 from cache.holder.RedisCacheHolder import RedisCacheHolder
+from cache.provider.RedisCacheProviderWithHash import RedisCacheProviderWithHash
 from core.exchange.InstrumentExchange import InstrumentExchange
 from core.options.exception.MissingOptionError import MissingOptionError
 from exchange.InstrumentExchangesHolder import InstrumentExchangesHolder
@@ -15,7 +16,7 @@ class InstrumentExchangeRepository:
         self.options = options
         self.__check_options()
         self.instrument_exchanges_key = options[INSTRUMENT_EXCHANGES_KEY]
-        self.cache = RedisCacheHolder()
+        self.cache = RedisCacheHolder(held_type=RedisCacheProviderWithHash)
 
     def __check_options(self):
         if self.options is None:
@@ -25,20 +26,24 @@ class InstrumentExchangeRepository:
             self.log.warning(f'Instrument Exchange Repository missing option please provide option {INSTRUMENT_EXCHANGES_KEY}')
             raise MissingOptionError(f'Instrument Exchange Repository missing option please provide option {INSTRUMENT_EXCHANGES_KEY}')
 
+    def store_key(self):
+        return self.options[INSTRUMENT_EXCHANGES_KEY]
+
+    @staticmethod
+    def value_key(instrument_exchange):
+        return f'{instrument_exchange[0]}{instrument_exchange[1]}'
+
     def store(self, instrument_exchanges: InstrumentExchangesHolder):
-        key = self.options[INSTRUMENT_EXCHANGES_KEY]
         all_exchanges = instrument_exchanges.get_all()
         serialized = list([[ie.instrument, ie.to_instrument] for ie in all_exchanges])
-        self.cache.store(key, serialized)
+        self.cache.values_store(self.store_key(), serialized, custom_key=self.value_key)
 
-    def append_store(self, instrument_exchange: InstrumentExchange):
-        key = self.options[INSTRUMENT_EXCHANGES_KEY]
-        serialized = [instrument_exchange.instrument, instrument_exchange.to_instrument]
-        self.cache.append_store(key, serialized)
+    def add(self, instrument_exchange: InstrumentExchange):
+        serialized_entity = [instrument_exchange.instrument, instrument_exchange.to_instrument]
+        self.cache.values_set_value(self.store_key(), self.value_key(serialized_entity), serialized_entity)
 
     def retrieve(self) -> InstrumentExchangesHolder:
-        key = self.options[INSTRUMENT_EXCHANGES_KEY]
-        serialized = self.cache.fetch(key, as_type=list)
+        serialized = self.cache.values_fetch(self.store_key())
         holder = InstrumentExchangesHolder()
         for serialized_instrument_exchange in serialized:
             (instrument, to_instrument) = tuple(serialized_instrument_exchange)

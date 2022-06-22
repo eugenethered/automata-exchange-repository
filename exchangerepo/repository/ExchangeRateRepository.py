@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional
 
 from cache.holder.RedisCacheHolder import RedisCacheHolder
+from cache.provider.RedisCacheProviderWithTimeSeries import RedisCacheProviderWithTimeSeries
 from core.exchange.ExchangeRate import ExchangeRate
 from core.exchange.InstrumentExchange import InstrumentExchange
 from core.options.exception.MissingOptionError import MissingOptionError
@@ -20,7 +21,7 @@ class ExchangeRateRepository:
         self.__check_options()
         self.timeseries_key = options[EXCHANGE_RATE_TIMESERIES_KEY]
         self.timeseries_retention_time = options[EXCHANGE_RATE_TIMESERIES_RETENTION]
-        self.cache = RedisCacheHolder()
+        self.cache = RedisCacheHolder(held_type=RedisCacheProviderWithTimeSeries)
 
     def __check_options(self):
         if self.options is None:
