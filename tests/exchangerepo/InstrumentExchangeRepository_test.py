@@ -30,12 +30,12 @@ class InstrumentExchangeRepositoryTestCase(unittest.TestCase):
         stored_instrument_exchanges = self.repository.retrieve()
         self.assertEqual(len(stored_instrument_exchanges.get_all()), 2)
 
-    def test_should_append_store_instrument(self):
+    def test_should_create_store_instrument(self):
         instrument_exchanges = InstrumentExchangesHolder()
         instrument_exchanges.add(InstrumentExchange('OTC', 'GBP'))
         instrument_exchanges.add(InstrumentExchange('OTC', 'USDT'))
         self.repository.store(instrument_exchanges)
-        self.repository.add(InstrumentExchange('OTC', 'BTC'))
+        self.repository.create(InstrumentExchange('OTC', 'BTC'))
         stored_instrument_exchanges = self.repository.retrieve()
         self.assertEqual(len(stored_instrument_exchanges.get_all()), 3)
 

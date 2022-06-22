@@ -38,9 +38,16 @@ class InstrumentExchangeRepository:
         serialized = list([[ie.instrument, ie.to_instrument] for ie in all_exchanges])
         self.cache.values_store(self.store_key(), serialized, custom_key=self.value_key)
 
-    def add(self, instrument_exchange: InstrumentExchange):
+    def create(self, instrument_exchange: InstrumentExchange):
+        self.update(instrument_exchange)
+
+    def update(self, instrument_exchange: InstrumentExchange):
         serialized_entity = [instrument_exchange.instrument, instrument_exchange.to_instrument]
         self.cache.values_set_value(self.store_key(), self.value_key(serialized_entity), serialized_entity)
+
+    def delete(self, instrument_exchange: InstrumentExchange):
+        serialized_entity = [instrument_exchange.instrument, instrument_exchange.to_instrument]
+        self.cache.values_delete_value(self.store_key(), self.value_key(serialized_entity))
 
     def retrieve(self) -> InstrumentExchangesHolder:
         serialized = self.cache.values_fetch(self.store_key())
