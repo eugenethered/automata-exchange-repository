@@ -14,7 +14,7 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         options = {
-            'REDIS_SERVER_ADDRESS': '192.168.1.90',
+            'REDIS_SERVER_ADDRESS': '10.104.71.60',
             'REDIS_SERVER_PORT': 6379,
             'EXCHANGE_RATE_TIMESERIES_KEY': 'test:ts:exchange-rate:{}',
             'EXCHANGE_RATE_TIMESERIES_RETENTION': 3600000
@@ -49,6 +49,7 @@ class ExchangeRateRepositoryTestCase(unittest.TestCase):
         self.repository.store(ExchangeRate('BTC', 'USDT', BigFloat('38719.72')), 2)
         latest_exchange_rate = self.repository.retrieve_latest(InstrumentExchange('BTC', 'USDT'))
         self.assertEqual(latest_exchange_rate, InstantRate(2, BigFloat('38719.72')))
+        self.assertEqual(latest_exchange_rate.rate.invert(), BigFloat('0.000025826633043833'))
 
     def test_should_not_obtain_latest_exchange_rate_when_there_are_none(self):
         latest_exchange_rate = self.repository.retrieve_latest(InstrumentExchange('BTC', 'USDT'))
